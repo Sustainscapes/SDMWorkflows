@@ -72,6 +72,7 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize){
 #' Clean_Taxa_rgbif(Cleaned_Taxize)
 #' @importFrom dplyr rename relocate select
 #' @importFrom readr write_csv
+#' @importFrom rgbif name_backbone_checklist
 Clean_Taxa_rgbif <- function(Cleaned_Taxize){
   rgbif_find <- rgbif::name_backbone_checklist(Cleaned_Taxize$matched_name2) |>
     # Change name to match the cleaned_taxize dataset
