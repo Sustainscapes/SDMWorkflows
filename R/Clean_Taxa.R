@@ -23,6 +23,7 @@
 #'  (2015): 1451-1456.
 
 Clean_Taxa_Taxize <- function(Taxons){
+  score <- matched_name2 <- TaxaID <- NULL
   NewTaxa <- data.frame(Taxa = Taxons, score = NA, matched_name2 = NA) |>
     tibble::rowid_to_column(var = "TaxaID")
 
@@ -36,11 +37,10 @@ Clean_Taxa_Taxize <- function(Taxons){
       NewTaxa[i,3:4] <- Temp
       if((i %% 50) == 0){
         message(paste(i, "of", nrow(NewTaxa), "Ready!", Sys.time()))
-        readr::write_csv(NewTaxa, "Results/Cleaned_Taxa_Taxize.csv")
       }
       gc()
     }, silent = T)
-
+    readr::write_csv(NewTaxa, "Results/Cleaned_Taxa_Taxize.csv")
   }
 
   Cleaned_Taxize <- NewTaxa |>
@@ -52,15 +52,6 @@ Clean_Taxa_Taxize <- function(Taxons){
   return(Cleaned_Taxize)
 }
 
-
-Clean_Taxa_rgbif <- function(Cleaned_Taxize){
-  rgbif_find <- rgbif::name_backbone_checklist(Cleaned_Taxize$matched_name2) |>
-    # Change name to match the cleaned_taxize dataset
-    dplyr::rename(matched_name2 = verbatim_name) |>
-    dplyr::relocate(matched_name2, .before = everything()) |>
-    dplyr::select(matched_name2, confidence, kingdom, phylum, order, family, genus, species)
-
-
 #' @title Clean Taxa from GBIF
 #' @description Clean the taxonomic list using GBIF
 #' @param Cleaned_Taxize a data frame containing the cleaned taxonomic list from function Clean_Taxa_Taxize
@@ -70,10 +61,18 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize){
 #' @examples
 #' Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = c("Canis lupus", "C. lupus"))
 #' Clean_Taxa_rgbif(Cleaned_Taxize)
-#' @importFrom dplyr rename relocate select
+#' @importFrom dplyr rename relocate select everything
 #' @importFrom readr write_csv
 #' @importFrom rgbif name_backbone_checklist
+#'
+#' @references
+#'
+#' Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram K
+#' (2023). rgbif: Interface to the Global Biodiversity Information
+#' Facility API_ R package version 3.7.4,
+
 Clean_Taxa_rgbif <- function(Cleaned_Taxize){
+  matched_name2 <- confidence <- kingdom <- phylum <- order <- family <- genus <- species <- verbatim_name <- NULL
   rgbif_find <- rgbif::name_backbone_checklist(Cleaned_Taxize$matched_name2) |>
     # Change name to match the cleaned_taxize dataset
     dplyr::rename(matched_name2 = verbatim_name) |>
@@ -89,14 +88,34 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize){
     group_by(species) |>
     dplyr::filter(confidence == max(confidence))
   readr::write_csv(FinalSpeciesList, "Results/FinalSpeciesList.csv")
+  return(FinalSpeciesList)
 }
-  readr::write_csv(rgbif_find, "Results/Cleaned_Taxa_rgbif.csv")
 
-  Species_Only <- rgbif_find |>
-    dplyr::filter(!is.na(species))
+#' @title Clean taxa using Taxize and rgbif
+#'
+#' @description
+#' This function cleans a vector of taxa using Taxize and rgbif
+#'
+#' @param Taxons Vector of taxa to be cleaned.
+#'
+#' @return A data frame with the cleaned taxa and their scores.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' Cleaned <- Clean_Taxa(Taxons = c("Canis lupus", "C. lupus"))
+#'
+#' @references
+#' Chamberlain, Scott T., et al. "Taxize: an R package for taxonomic
+#'  lookup and manipulation." Methods in Ecology and Evolution 6.12
+#'  (2015): 1451-1456.
+#' Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram K
+#' (2023). rgbif: Interface to the Global Biodiversity Information
+#' Facility API_ R package version 3.7.4
 
-  FinalSpeciesList <- Species_Only |>
-    group_by(species) |>
-    dplyr::filter(confidence == max(confidence))
-  readr::write_csv(FinalSpeciesList, "Results/FinalSpeciesList.csv")
+Clean_Taxa <- function(Taxons){
+  Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons)
+  Final_Result <- Clean_Taxa_rgbif(Cleaned_Taxize)
+  return(Final_Result)
 }

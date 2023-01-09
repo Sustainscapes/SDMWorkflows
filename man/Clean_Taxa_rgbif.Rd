@@ -19,3 +19,8 @@ Clean the taxonomic list using GBIF
 Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = c("Canis lupus", "C. lupus"))
 Clean_Taxa_rgbif(Cleaned_Taxize)
 }
+\references{
+Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram K
+(2023). rgbif: Interface to the Global Biodiversity Information
+Facility API_ R package version 3.7.4,
+}
