@@ -4,6 +4,9 @@
 #' This function cleans a vector of taxa using Taxize.
 #'
 #' @param Taxons Vector of taxa to be cleaned.
+#' @param WriteFile logical if False (default) only returns a
+#' data frame, if TRUE will generate a folder (Results in the
+#' Working directory with a csv of the results)
 #'
 #' @return A data frame with the cleaned taxa and their scores.
 #'
@@ -22,12 +25,14 @@
 #'  lookup and manipulation." Methods in Ecology and Evolution 6.12
 #'  (2015): 1451-1456.
 
-Clean_Taxa_Taxize <- function(Taxons){
+Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
   score <- matched_name2 <- TaxaID <- NULL
   NewTaxa <- data.frame(Taxa = Taxons, score = NA, matched_name2 = NA) |>
     tibble::rowid_to_column(var = "TaxaID")
+  if(WriteFile){
+    dir.create("Results")
+  }
 
-  dir.create("Results")
 
   for(i in 1:nrow(NewTaxa)){
     try({
@@ -40,8 +45,13 @@ Clean_Taxa_Taxize <- function(Taxons){
       }
       gc()
     }, silent = T)
+
+  }
+
+  if(WriteFile){
     readr::write_csv(NewTaxa, "Results/Cleaned_Taxa_Taxize.csv")
   }
+
 
   Cleaned_Taxize <- NewTaxa |>
     dplyr::filter(!is.na(matched_name2)) |>
@@ -55,6 +65,9 @@ Clean_Taxa_Taxize <- function(Taxons){
 #' @title Clean Taxa from GBIF
 #' @description Clean the taxonomic list using GBIF
 #' @param Cleaned_Taxize a data frame containing the cleaned taxonomic list from function Clean_Taxa_Taxize
+#' @param WriteFile logical if False (default) only returns a
+#' data frame, if TRUE will generate a folder (Results in the
+#' Working directory with a csv of the results)
 #' @return A csv file containing the cleaned taxonomic list
 #' @export
 #'
@@ -71,15 +84,19 @@ Clean_Taxa_Taxize <- function(Taxons){
 #' (2023). rgbif: Interface to the Global Biodiversity Information
 #' Facility API_ R package version 3.7.4,
 
-Clean_Taxa_rgbif <- function(Cleaned_Taxize){
+Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F){
   matched_name2 <- confidence <- kingdom <- phylum <- order <- family <- genus <- species <- verbatim_name <- NULL
+  if(WriteFile){
+    dir.create("Results")
+  }
   rgbif_find <- rgbif::name_backbone_checklist(Cleaned_Taxize$matched_name2) |>
     # Change name to match the cleaned_taxize dataset
     dplyr::rename(matched_name2 = verbatim_name) |>
     dplyr::relocate(matched_name2, .before = everything()) |>
     dplyr::select(matched_name2, confidence, kingdom, phylum, order, family, genus, species)
-
-  readr::write_csv(rgbif_find, "Results/Cleaned_Taxa_rgbif.csv")
+  if(WriteFile){
+    readr::write_csv(rgbif_find, "Results/Cleaned_Taxa_rgbif.csv")
+  }
 
   Species_Only <- rgbif_find |>
     dplyr::filter(!is.na(species))
@@ -87,7 +104,9 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize){
   FinalSpeciesList <- Species_Only |>
     group_by(species) |>
     dplyr::filter(confidence == max(confidence))
-  readr::write_csv(FinalSpeciesList, "Results/FinalSpeciesList.csv")
+  if(WriteFile){
+    readr::write_csv(FinalSpeciesList, "Results/FinalSpeciesList.csv")
+  }
   return(FinalSpeciesList)
 }
 
@@ -97,6 +116,9 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize){
 #' This function cleans a vector of taxa using Taxize and rgbif
 #'
 #' @param Taxons Vector of taxa to be cleaned.
+#' @param WriteFile logical if False (default) only returns a
+#' data frame, if TRUE will generate a folder (Results in the
+#' Working directory with a csv of the results)
 #'
 #' @return A data frame with the cleaned taxa and their scores.
 #'
@@ -114,8 +136,8 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize){
 #' (2023). rgbif: Interface to the Global Biodiversity Information
 #' Facility API_ R package version 3.7.4
 
-Clean_Taxa <- function(Taxons){
-  Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons)
-  Final_Result <- Clean_Taxa_rgbif(Cleaned_Taxize)
+Clean_Taxa <- function(Taxons, WriteFile = F){
+  Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons, WriteFile = WriteFile)
+  Final_Result <- Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = WriteFile)
   return(Final_Result)
 }

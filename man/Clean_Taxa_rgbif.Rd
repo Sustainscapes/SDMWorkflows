@@ -4,10 +4,14 @@
 \alias{Clean_Taxa_rgbif}
 \title{Clean Taxa from GBIF}
 \usage{
-Clean_Taxa_rgbif(Cleaned_Taxize)
+Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = F)
 }
 \arguments{
 \item{Cleaned_Taxize}{a data frame containing the cleaned taxonomic list from function Clean_Taxa_Taxize}
+
+\item{WriteFile}{logical if False (default) only returns a
+data frame, if TRUE will generate a folder (Results in the
+Working directory with a csv of the results)}
 }
 \value{
 A csv file containing the cleaned taxonomic list

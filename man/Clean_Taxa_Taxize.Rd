@@ -4,10 +4,14 @@
 \alias{Clean_Taxa_Taxize}
 \title{Clean taxa using Taxize}
 \usage{
-Clean_Taxa_Taxize(Taxons)
+Clean_Taxa_Taxize(Taxons, WriteFile = F)
 }
 \arguments{
 \item{Taxons}{Vector of taxa to be cleaned.}
+
+\item{WriteFile}{logical if False (default) only returns a
+data frame, if TRUE will generate a folder (Results in the
+Working directory with a csv of the results)}
 }
 \value{
 A data frame with the cleaned taxa and their scores.
