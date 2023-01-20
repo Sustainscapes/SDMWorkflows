@@ -94,7 +94,7 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
     # Change name to match the cleaned_taxize dataset
     dplyr::rename(matched_name2 = verbatim_name) |>
     dplyr::relocate(matched_name2, .before = everything()) |>
-    dplyr::select(matched_name2, confidence, canonicalName, kingdom, phylum, order, family, genus, species)
+    dplyr::select(matched_name2, confidence, canonicalName, kingdom, phylum, order, family, genus, species, rank)
   if(WriteFile){
     readr::write_csv(rgbif_find, "Results/Cleaned_Taxa_rgbif.csv")
   }
@@ -151,6 +151,6 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
 
 Clean_Taxa <- function(Taxons, WriteFile = F, Species_Only = T){
   Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons, WriteFile = WriteFile)
-  Final_Result <- Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = WriteFile)
+  Final_Result <- Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = WriteFile, Species_Only = Species_Only)
   return(Final_Result)
 }
