@@ -26,7 +26,7 @@
 #'  (2015): 1451-1456.
 
 Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
-  score <- matched_name2 <- TaxaID <- user_supplied_name <- NULL
+  score <- matched_name2 <- TaxaID <- NULL
   NewTaxa <- data.frame(Taxa = Taxons, score = NA, matched_name2 = NA) |>
     tibble::rowid_to_column(var = "TaxaID")
   if(WriteFile){
@@ -38,7 +38,7 @@ Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
     try({
       Temp <- taxize::gnr_resolve(NewTaxa$Taxa[i],
                                   data_source_ids = "11", canonical = TRUE, best_match_only = T) |>
-        dplyr::select(user_supplied_name, score, matched_name2)
+        dplyr::select(score, matched_name2)
       NewTaxa[i,3:4] <- Temp
       if((i %% 50) == 0){
         message(paste(i, "of", nrow(NewTaxa), "Ready!", Sys.time()))
@@ -86,7 +86,7 @@ Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
 #' Facility API_ R package version 3.7.4,
 
 Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
-  matched_name2 <- confidence <- kingdom <- phylum <- order <- family <- genus <- species <- verbatim_name <- canonicalName <- user_supplied_name <- NULL
+  matched_name2 <- confidence <- kingdom <- phylum <- order <- family <- genus <- species <- verbatim_name <- canonicalName <-  NULL
   if(WriteFile){
     dir.create("Results")
   }
@@ -94,7 +94,8 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
     # Change name to match the cleaned_taxize dataset
     dplyr::rename(matched_name2 = verbatim_name) |>
     dplyr::relocate(matched_name2, .before = everything()) |>
-    dplyr::select(user_supplied_name, matched_name2, confidence, canonicalName, kingdom, phylum, order, family, genus, species, rank)
+    dplyr::left_join(Cleaned_Taxize) |>
+    dplyr::select(Taxa, matched_name2, confidence, canonicalName, kingdom, phylum, order, family, genus, species, rank)
   if(WriteFile){
     readr::write_csv(rgbif_find, "Results/Cleaned_Taxa_rgbif.csv")
   }
