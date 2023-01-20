@@ -65,6 +65,7 @@ Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
 #' @title Clean Taxa from GBIF
 #' @description Clean the taxonomic list using GBIF
 #' @param Cleaned_Taxize a data frame containing the cleaned taxonomic list from function Clean_Taxa_Taxize
+#' @param Species_Only logical, if TRUE (default) only species will be returned, if FALSE, it will return the highest possible taxonomic resolution
 #' @param WriteFile logical if False (default) only returns a
 #' data frame, if TRUE will generate a folder (Results in the
 #' Working directory with a csv of the results)
@@ -84,8 +85,8 @@ Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
 #' (2023). rgbif: Interface to the Global Biodiversity Information
 #' Facility API_ R package version 3.7.4,
 
-Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F){
-  matched_name2 <- confidence <- kingdom <- phylum <- order <- family <- genus <- species <- verbatim_name <- NULL
+Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
+  matched_name2 <- confidence <- kingdom <- phylum <- order <- family <- genus <- species <- verbatim_name <- canonicalName <- NULL
   if(WriteFile){
     dir.create("Results")
   }
@@ -93,17 +94,26 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F){
     # Change name to match the cleaned_taxize dataset
     dplyr::rename(matched_name2 = verbatim_name) |>
     dplyr::relocate(matched_name2, .before = everything()) |>
-    dplyr::select(matched_name2, confidence, kingdom, phylum, order, family, genus, species)
+    dplyr::select(matched_name2, confidence, canonicalName, kingdom, phylum, order, family, genus, species)
   if(WriteFile){
     readr::write_csv(rgbif_find, "Results/Cleaned_Taxa_rgbif.csv")
   }
 
-  Species_Only <- rgbif_find |>
-    dplyr::filter(!is.na(species))
+  if(Species_Only){
+    Species_Only <- rgbif_find |>
+      dplyr::filter(!is.na(species))
 
-  FinalSpeciesList <- Species_Only |>
-    group_by(species) |>
-    dplyr::filter(confidence == max(confidence))
+    FinalSpeciesList <- Species_Only |>
+      group_by(species) |>
+      dplyr::filter(confidence == max(confidence))
+  } else if (!Species_Only){
+
+    FinalSpeciesList <- rgbif_find |>
+      group_by(canonicalName) |>
+      dplyr::filter(confidence == max(confidence))
+  }
+
+
   if(WriteFile){
     readr::write_csv(FinalSpeciesList, "Results/FinalSpeciesList.csv")
   }
@@ -119,6 +129,9 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F){
 #' @param WriteFile logical if False (default) only returns a
 #' data frame, if TRUE will generate a folder (Results in the
 #' Working directory with a csv of the results)
+#' @param Species_Only logical, if TRUE (default) only species will be
+#' returned, if FALSE, it will return the highest possible taxonomic
+#' resolution
 #'
 #' @return A data frame with the cleaned taxa and their scores.
 #'
@@ -136,7 +149,7 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F){
 #' (2023). rgbif: Interface to the Global Biodiversity Information
 #' Facility API_ R package version 3.7.4
 
-Clean_Taxa <- function(Taxons, WriteFile = F){
+Clean_Taxa <- function(Taxons, WriteFile = F, Species_Only = T){
   Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons, WriteFile = WriteFile)
   Final_Result <- Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = WriteFile)
   return(Final_Result)

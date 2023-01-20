@@ -4,7 +4,7 @@
 \alias{Clean_Taxa}
 \title{Clean taxa using Taxize and rgbif}
 \usage{
-Clean_Taxa(Taxons, WriteFile = F)
+Clean_Taxa(Taxons, WriteFile = F, Species_Only = T)
 }
 \arguments{
 \item{Taxons}{Vector of taxa to be cleaned.}
@@ -12,6 +12,10 @@ Clean_Taxa(Taxons, WriteFile = F)
 \item{WriteFile}{logical if False (default) only returns a
 data frame, if TRUE will generate a folder (Results in the
 Working directory with a csv of the results)}
+
+\item{Species_Only}{logical, if TRUE (default) only species will be
+returned, if FALSE, it will return the highest possible taxonomic
+resolution}
 }
 \value{
 A data frame with the cleaned taxa and their scores.

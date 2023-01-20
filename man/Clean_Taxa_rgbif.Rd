@@ -4,7 +4,7 @@
 \alias{Clean_Taxa_rgbif}
 \title{Clean Taxa from GBIF}
 \usage{
-Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = F)
+Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = F, Species_Only = T)
 }
 \arguments{
 \item{Cleaned_Taxize}{a data frame containing the cleaned taxonomic list from function Clean_Taxa_Taxize}
@@ -12,6 +12,8 @@ Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = F)
 \item{WriteFile}{logical if False (default) only returns a
 data frame, if TRUE will generate a folder (Results in the
 Working directory with a csv of the results)}
+
+\item{Species_Only}{logical, if TRUE (default) only species will be returned, if FALSE, it will return the highest possible taxonomic resolution}
 }
 \value{
 A csv file containing the cleaned taxonomic list
