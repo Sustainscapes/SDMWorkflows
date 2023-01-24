@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # SDMWorkflows
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/derek-corcoran-barrios/SDMWorkflows/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/derek-corcoran-barrios/SDMWorkflows/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/Sustainscapes/SDMWorkflows/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Sustainscapes/SDMWorkflows/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of SDMWorkflows is to make a workflow for Species distribution models for Sustainscapes
@@ -26,7 +26,7 @@ The goal of SDMWorkflows is to make a workflow for Species distribution models f
 You can install the development version of SDMWorkflows like so:
 
 ``` r
-remotes::install_github("derek-corcoran-barrios/SDMWorkflows")
+remotes::install_github("Sustainscapes/SDMWorkflows")
 ```
 
 ## Example

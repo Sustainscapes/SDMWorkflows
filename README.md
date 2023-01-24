@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/derek-corcoran-barrios/SDMWorkflows/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/derek-corcoran-barrios/SDMWorkflows/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/Sustainscapes/SDMWorkflows/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Sustainscapes/SDMWorkflows/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of SDMWorkflows is to make a workflow for Species distribution
@@ -16,7 +16,7 @@ models for Sustainscapes
 You can install the development version of SDMWorkflows like so:
 
 ``` r
-remotes::install_github("derek-corcoran-barrios/SDMWorkflows")
+remotes::install_github("Sustainscapes/SDMWorkflows")
 ```
 
 ## Example
@@ -43,13 +43,15 @@ with these together with their taxonomy resolution,
 
 ``` r
 Final_List <- Clean_Taxa(Spp)
+#> Joining, by = "Taxa"
+#> Joining, by = "matched_name2"
 ```
 
 Which yields the following table, the resolved species is the Species
 Column
 
-| matched_name2  | confidence | kingdom  | phylum       | order     | family   | genus | species        |
-|:---------------|-----------:|:---------|:-------------|:----------|:---------|:------|:---------------|
-| Abies concolor |         98 | Plantae  | Tracheophyta | Pinales   | Pinaceae | Abies | Abies concolor |
-| Abies lowiana  |         98 | Plantae  | Tracheophyta | Pinales   | Pinaceae | Abies | Abies concolor |
-| Canis lupus    |         99 | Animalia | Chordata     | Carnivora | Canidae  | Canis | Canis lupus    |
+| Taxa           | matched_name2  | confidence | canonicalName  | kingdom  | phylum       | order     | family   | genus | species        | rank    |
+|:---------------|:---------------|-----------:|:---------------|:---------|:-------------|:----------|:---------|:------|:---------------|:--------|
+| Abies concolor | Abies concolor |         98 | Abies concolor | Plantae  | Tracheophyta | Pinales   | Pinaceae | Abies | Abies concolor | SPECIES |
+| Abies lowiana  | Abies lowiana  |         98 | Abies lowiana  | Plantae  | Tracheophyta | Pinales   | Pinaceae | Abies | Abies concolor | SPECIES |
+| Canis lupus    | Canis lupus    |         99 | Canis lupus    | Animalia | Chordata     | Carnivora | Canidae  | Canis | Canis lupus    | SPECIES |
