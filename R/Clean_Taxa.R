@@ -16,7 +16,7 @@
 #' Clean_Taxa_Taxize(Taxons = c("Canis lupus", "C. lupus"))
 #'
 #' @importFrom taxize gnr_resolve
-#' @importFrom dplyr select filter group_by ungroup
+#' @importFrom dplyr select filter group_by ungroup rename
 #' @importFrom readr write_csv
 #' @importFrom tibble rowid_to_column
 #'
@@ -26,7 +26,7 @@
 #'  (2015): 1451-1456.
 
 Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
-  score <- matched_name2 <- TaxaID <- NULL
+  score <- matched_name2 <- TaxaID <- user_supplied_name <- Taxa <- NULL
   NewTaxa <- data.frame(Taxa = Taxons, score = NA, matched_name2 = NA) |>
     tibble::rowid_to_column(var = "TaxaID")
   if(WriteFile){
@@ -34,18 +34,28 @@ Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
   }
 
 
-  for(i in 1:nrow(NewTaxa)){
-    try({
-      Temp <- taxize::gnr_resolve(NewTaxa$Taxa[i],
+  # try vectorized form first
+  Temp <- tryCatch(taxize::gnr_resolve(NewTaxa$Taxa, data_source_ids = "11", canonical = TRUE, best_match_only = T),
+                   error = function(e) return(NULL))
+
+  # if vectorized form fails, use loop
+  if(is.null(Temp)){
+    message("Vectorized form did not work")
+    for(i in 1:nrow(NewTaxa)){
+      try({Temp <- taxize::gnr_resolve(NewTaxa$Taxa[i],
                                   data_source_ids = "11", canonical = TRUE, best_match_only = T) |>
         dplyr::select(score, matched_name2)
-      NewTaxa[i,3:4] <- Temp
+      NewTaxa[i,3:4] <- Temp})
       if((i %% 50) == 0){
         message(paste(i, "of", nrow(NewTaxa), "Ready!", Sys.time()))
       }
       gc()
-    }, silent = T)
-
+    }
+  } else {
+      NewTaxa <- Temp |>
+      dplyr::rename(Taxa = user_supplied_name) |>
+      dplyr::select(Taxa, score, matched_name2) |>
+      dplyr::left_join(dplyr::select(NewTaxa, TaxaID, Taxa))
   }
 
   if(WriteFile){
@@ -75,7 +85,7 @@ Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
 #' @examples
 #' Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = c("Canis lupus", "C. lupus"))
 #' Clean_Taxa_rgbif(Cleaned_Taxize)
-#' @importFrom dplyr rename relocate select everything
+#' @importFrom dplyr rename relocate select everything left_join
 #' @importFrom readr write_csv
 #' @importFrom rgbif name_backbone_checklist
 #'
@@ -86,7 +96,7 @@ Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
 #' Facility API_ R package version 3.7.4,
 
 Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
-  matched_name2 <- confidence <- kingdom <- phylum <- order <- family <- genus <- species <- verbatim_name <- canonicalName <-  NULL
+  matched_name2 <- confidence <- kingdom <- phylum <- order <- family <- genus <- species <- verbatim_name <- canonicalName <- Taxa <- NULL
   if(WriteFile){
     dir.create("Results")
   }
@@ -133,6 +143,7 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
 #' @param Species_Only logical, if TRUE (default) only species will be
 #' returned, if FALSE, it will return the highest possible taxonomic
 #' resolution
+#' @importFrom purrr reduce
 #'
 #' @return A data frame with the cleaned taxa and their scores.
 #'
@@ -151,7 +162,21 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
 #' Facility API_ R package version 3.7.4
 
 Clean_Taxa <- function(Taxons, WriteFile = F, Species_Only = T){
-  Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons, WriteFile = WriteFile)
-  Final_Result <- Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = WriteFile, Species_Only = Species_Only)
+  if(length(Taxons) < 10000){
+    Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons, WriteFile = WriteFile)
+    Final_Result <- Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = WriteFile, Species_Only = Species_Only)
+  } else {
+    print("more than 10000 taxons, will be divided into chunks")
+    Taxons <- split(Taxons, ceiling(seq_along(Taxons) / 1000))
+    Final_Result <- list()
+    for (i in 1:length(Taxons)) {
+      Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons, WriteFile = WriteFile)
+      Final_Result[[i]] <- Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = WriteFile, Species_Only = Species_Only)
+      print(paste("Chunk", i, "of", length(Taxons), "ready!", Sys.time()))
+    }
+    Final_Result <- Final_Result |>
+      purrr::reduce(rbind)
+  }
   return(Final_Result)
 }
+

@@ -15,6 +15,7 @@ BugReports: https://github.com/derek-corcoran-barrios/SDMWorkflows/issues
 Imports: 
     dplyr,
     janitor,
+    purrr,
     readr,
     rgbif,
     taxize,

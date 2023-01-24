@@ -4,6 +4,8 @@
 #'
 #' @param Species A data frame containing the species to query.
 #' @param WriteFile Logical. If \code{TRUE}, the occurrence data will be written to the \code{Occs} folder. If \code{FALSE}, the occurrence data will be returned in a list.
+#' @param continent what contintent are the occurrences downloaded from
+#' @param limit maximum number of occurrences downloaded
 #'
 #' @return If \code{WriteFile = TRUE}, this function does not return anything. If \code{WriteFile = FALSE}, a list containing the occurrence data for each species is returned.
 #'
