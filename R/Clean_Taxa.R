@@ -170,7 +170,7 @@ Clean_Taxa <- function(Taxons, WriteFile = F, Species_Only = T){
     Taxons <- split(Taxons, ceiling(seq_along(Taxons) / 1000))
     Final_Result <- list()
     for (i in 1:length(Taxons)) {
-      Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons, WriteFile = WriteFile)
+      Cleaned_Taxize <- Clean_Taxa_Taxize(Taxons = Taxons[[i]], WriteFile = WriteFile)
       Final_Result[[i]] <- Clean_Taxa_rgbif(Cleaned_Taxize, WriteFile = WriteFile, Species_Only = Species_Only)
       print(paste("Chunk", i, "of", length(Taxons), "ready!", Sys.time()))
     }
