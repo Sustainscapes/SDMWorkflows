@@ -24,6 +24,7 @@ GetOccs <- function(Species, WriteFile = T, continent = NULL, limit = 10000){
     Presences <- list()
   }
   for(i in 1:length(Species)){
+    message(paste("Starting species", i))
     Occs <- try({rgbif::occ_data(scientificName = Species[i],
                                  hasCoordinate = T,
                                  continent = continent,
@@ -31,15 +32,15 @@ GetOccs <- function(Species, WriteFile = T, continent = NULL, limit = 10000){
                                  limit = limit)})
     message(paste(i, "of", length(Species), "ready!", Sys.time()))
     if(WriteFile == T){
-      try({saveRDS(Occs, paste0("Occs/",janitor::make_clean_names(unique(Species[i])),".rds"))})
+      try({saveRDS(Occs$data, paste0("Occs/",janitor::make_clean_names(unique(Species[i])),".rds"))})
     }else if(WriteFile == F){
-      Presences[[i]] <- Occs
+      Presences[[i]] <- Occs$data
     }
     rm(Occs)
     gc()
-    if(WriteFile == F){
-      return(Presences)
-    }
+  }
+  if(WriteFile == F){
+    return(Presences)
   }
 }
 
