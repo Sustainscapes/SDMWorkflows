@@ -20,6 +20,7 @@ Imports:
     readr,
     rgbif,
     taxize,
+    terra,
     tibble
 Suggests: 
     knitr,
