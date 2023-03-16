@@ -28,8 +28,12 @@ Creates a 20\% expanded convex hull from a set of coordinates.
 }
 \examples{
 
-DF <- data.frame(decimalLongitude = c(23.978543, 23.785003, 11.485,  -2.054027, 12.9069), decimalLatitude = c(38.088876, 60.238213, 48.165, 53.33939, 56.80782))
+DF <- data.frame(decimalLongitude =
+      c(23.978543, 23.785003, 11.485,  -2.054027, 12.9069),
+                 decimalLatitude =
+       c(38.088876, 60.238213, 48.165, 53.33939, 56.80782))
 
-Convex_20(DF, lon = "decimalLongitude", lat = "decimalLatitude", proj = "+proj=longlat +datum=WGS84 +no_defs")
+Convex_20(DF, lon = "decimalLongitude", lat = "decimalLatitude",
+proj = "+proj=longlat +datum=WGS84 +no_defs")
 
 }
