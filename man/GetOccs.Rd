@@ -14,6 +14,8 @@ GetOccs(Species, WriteFile = T, continent = NULL, limit = 10000)
 \item{continent}{what contintent are the occurrences downloaded from}
 
 \item{limit}{maximum number of occurrences downloaded}
+
+\item{country}{character, The 2-letter country code (ISO-3166-1) in which the occurrence was recorded.}
 }
 \value{
 If \code{WriteFile = TRUE}, this function does not return anything. If \code{WriteFile = FALSE}, a list containing the occurrence data for each species is returned.

@@ -96,7 +96,7 @@ Clean_Taxa_Taxize <- function(Taxons, WriteFile = F){
 #' Facility API_ R package version 3.7.4,
 
 Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
-  matched_name2 <- confidence <- kingdom <- phylum <- order <- family <- genus <- species <- verbatim_name <- canonicalName <- Taxa <- NULL
+  matched_name2 <- confidence <- kingdom <- phylum <- class <- order <- family <- genus <- species <- verbatim_name <- canonicalName <- Taxa <- NULL
   if(WriteFile){
     dir.create("Results")
   }
@@ -105,7 +105,7 @@ Clean_Taxa_rgbif <- function(Cleaned_Taxize, WriteFile = F, Species_Only = T){
     dplyr::rename(matched_name2 = verbatim_name) |>
     dplyr::relocate(matched_name2, .before = everything()) |>
     dplyr::left_join(Cleaned_Taxize) |>
-    dplyr::select(Taxa, matched_name2, confidence, canonicalName, kingdom, phylum, order, family, genus, species, rank)
+    dplyr::select(Taxa, matched_name2, confidence, canonicalName, kingdom, phylum, class, order, family, genus, species, rank)
   if(WriteFile){
     readr::write_csv(rgbif_find, "Results/Cleaned_Taxa_rgbif.csv")
   }

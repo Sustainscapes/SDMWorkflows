@@ -5,6 +5,7 @@
 #' @param Species A data frame containing the species to query.
 #' @param WriteFile Logical. If \code{TRUE}, the occurrence data will be written to the \code{Occs} folder. If \code{FALSE}, the occurrence data will be returned in a list.
 #' @param continent what contintent are the occurrences downloaded from
+#' @param country character, The 2-letter country code (ISO-3166-1) in which the occurrence was recorded.
 #' @param limit maximum number of occurrences downloaded
 #'
 #' @return If \code{WriteFile = TRUE}, this function does not return anything. If \code{WriteFile = FALSE}, a list containing the occurrence data for each species is returned.
@@ -28,6 +29,7 @@ GetOccs <- function(Species, WriteFile = T, continent = NULL, limit = 10000){
     Occs <- try({rgbif::occ_data(scientificName = Species[i],
                                  hasCoordinate = T,
                                  continent = continent,
+                                 country = NULL,
                                  hasGeospatialIssue=FALSE,
                                  limit = limit)})
     message(paste(i, "of", length(Species), "ready!", Sys.time()))
