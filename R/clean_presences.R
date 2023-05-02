@@ -6,8 +6,10 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' Presences <- SDMWorkflows::GetOccs(Species = c("Abies concolor"), WriteFile = FALSE, limit = 500)
 #' Cleaned <- clean_presences(Presences[[1]])
+#' }
 
 clean_presences <- function(DF){
   Cleaned <- CoordinateCleaner::clean_coordinates(DF,

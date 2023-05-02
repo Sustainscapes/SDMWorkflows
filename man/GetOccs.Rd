@@ -4,18 +4,24 @@
 \alias{GetOccs}
 \title{Get occurrence data}
 \usage{
-GetOccs(Species, WriteFile = T, continent = NULL, limit = 10000)
+GetOccs(
+  Species,
+  WriteFile = T,
+  continent = NULL,
+  country = NULL,
+  limit = 10000
+)
 }
 \arguments{
-\item{Species}{A data frame containing the species to query.}
+\item{Species}{A vector containing the species to query.}
 
 \item{WriteFile}{Logical. If \code{TRUE}, the occurrence data will be written to the \code{Occs} folder. If \code{FALSE}, the occurrence data will be returned in a list.}
 
 \item{continent}{what contintent are the occurrences downloaded from}
 
-\item{limit}{maximum number of occurrences downloaded}
-
 \item{country}{character, The 2-letter country code (ISO-3166-1) in which the occurrence was recorded.}
+
+\item{limit}{maximum number of occurrences downloaded}
 }
 \value{
 If \code{WriteFile = TRUE}, this function does not return anything. If \code{WriteFile = FALSE}, a list containing the occurrence data for each species is returned.
@@ -25,5 +31,7 @@ This function uses the \code{rgbif} package to get occurrence data from the Glob
 }
 \examples{
 # Get occurrence data for species in FinalSpeciesList
+\donttest{
 Presences <- SDMWorkflows::GetOccs(Species = c("Abies concolor", "Canis lupus"), WriteFile = FALSE)
+}
 }

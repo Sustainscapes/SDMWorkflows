@@ -2,7 +2,7 @@
 #'
 #' This function uses the \code{rgbif} package to get occurrence data from the Global Biodiversity Information Facility (GBIF) API.
 #'
-#' @param Species A data frame containing the species to query.
+#' @param Species A vector containing the species to query.
 #' @param WriteFile Logical. If \code{TRUE}, the occurrence data will be written to the \code{Occs} folder. If \code{FALSE}, the occurrence data will be returned in a list.
 #' @param continent what contintent are the occurrences downloaded from
 #' @param country character, The 2-letter country code (ISO-3166-1) in which the occurrence was recorded.
@@ -16,9 +16,26 @@
 #' @importFrom janitor make_clean_names
 #' @examples
 #' # Get occurrence data for species in FinalSpeciesList
+#' \donttest{
 #' Presences <- SDMWorkflows::GetOccs(Species = c("Abies concolor", "Canis lupus"), WriteFile = FALSE)
+#' }
 
-GetOccs <- function(Species, WriteFile = T, continent = NULL, limit = 10000){
+GetOccs <- function(Species, WriteFile = T, continent = NULL, country = NULL, limit = 10000){
+  if (!is.character(Species)) {
+    stop("Species argument must be a character vector")
+  }
+  if (!is.logical(WriteFile)) {
+    stop("WriteFile argument must be a logical value")
+  }
+  if (!is.null(continent) && !is.character(continent)) {
+    stop("Continent argument must be a character string")
+  }
+  if (!is.null(country) && !is.character(country)) {
+    stop("country argument must be a character string")
+  }
+  if (!is.numeric(limit)) {
+    stop("Limit argument must be a numeric value")
+  }
   if(WriteFile == T){
     dir.create("Occs")
   } else if(WriteFile == F){
@@ -26,16 +43,21 @@ GetOccs <- function(Species, WriteFile = T, continent = NULL, limit = 10000){
   }
   for(i in 1:length(Species)){
     message(paste("Starting species", i))
-    Occs <- try({rgbif::occ_data(scientificName = Species[i],
+    Occs <- tryCatch(
+      expr = {rgbif::occ_data(scientificName = Species[i],
                                  hasCoordinate = T,
                                  continent = continent,
-                                 country = NULL,
+                                 country = country,
                                  hasGeospatialIssue=FALSE,
-                                 limit = limit)})
+                                 limit = limit)},
+      error = function(e) {
+        message(paste("Error for species", Species[i], Sys.time()))
+        NULL
+      })
     message(paste(i, "of", length(Species), "ready!", Sys.time()))
-    if(WriteFile == T){
+    if(WriteFile == TRUE){
       try({saveRDS(Occs$data, paste0("Occs/",janitor::make_clean_names(unique(Species[i])),".rds"))})
-    }else if(WriteFile == F){
+    }else if(WriteFile == FALSE){
       Presences[[i]] <- Occs$data
     }
     rm(Occs)
