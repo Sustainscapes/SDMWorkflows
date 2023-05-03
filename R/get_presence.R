@@ -15,6 +15,7 @@
 #'
 #' @importFrom rgbif occ_data
 #' @importFrom janitor make_clean_names
+#' @importFrom utils write.table
 #' @examples
 #' # Get occurrence data for species in FinalSpeciesList
 #' \donttest{
@@ -93,7 +94,11 @@ GetOccs <- function(Species, WriteFile = T, continent = NULL, country = NULL, li
         Presences[[i]] <- Occs$data
       }
       if(Log == T){
-        log_entry <- data.frame(Species = Species[i], Start_time = format(Sys.time()), End_time = format(Sys.time()), Error = NA, Num_presences = nrow(Occs$data))
+        if(is.null(Occs$data)){
+          log_entry <- data.frame(Species = Species[i], Start_time = format(Sys.time()), End_time = format(Sys.time()), Error = NA, Num_presences = 0)
+        } else if (!is.null(Occs$data)){
+          log_entry <- data.frame(Species = Species[i], Start_time = format(Sys.time()), End_time = format(Sys.time()), Error = NA, Num_presences = nrow(Occs$data))
+        }
         write.table(log_entry, file = log_file, append = TRUE, row.names = FALSE, col.names = FALSE, sep = ",")
       }
     }
