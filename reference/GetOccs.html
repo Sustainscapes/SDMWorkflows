@@ -60,7 +60,8 @@
 <span>  continent <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  country <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  limit <span class="op">=</span> <span class="fl">10000</span>,</span>
-<span>  Log <span class="op">=</span> <span class="cn">T</span></span>
+<span>  Log <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -89,6 +90,10 @@
 <dt>Log</dt>
 <dd><p>Logical. If <code>TRUE</code>, a log file will be created with information on the progress of the function.</p></dd>
 
+
+<dt>...</dt>
+<dd><p>Additional arguments to be passed to the <code>occ_data</code> function.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -102,8 +107,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Get occurrence data for species in FinalSpeciesList</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">Presences</span> <span class="op">&lt;-</span> <span class="fu">SDMWorkflows</span><span class="fu">::</span><span class="fu">GetOccs</span><span class="op">(</span>Species <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Abies concolor"</span>, <span class="st">"Canis lupus"</span><span class="op">)</span>, WriteFile <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open file 'Occs/Log_2023-05-03_09-21-37.csv': No such file or directory</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in file(file, ifelse(append, "a", "w")):</span> cannot open the connection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Starting species 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 of 2 ready! 2023-05-07 20:15:15.938956</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Starting species 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2 of 2 ready! 2023-05-07 20:15:51.201106</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
