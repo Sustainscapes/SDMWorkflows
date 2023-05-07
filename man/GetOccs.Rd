@@ -10,7 +10,8 @@ GetOccs(
   continent = NULL,
   country = NULL,
   limit = 10000,
-  Log = T
+  Log = T,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ GetOccs(
 \item{limit}{maximum number of occurrences downloaded}
 
 \item{Log}{Logical. If \code{TRUE}, a log file will be created with information on the progress of the function.}
+
+\item{...}{Additional arguments to be passed to the \code{occ_data} function.}
 }
 \value{
 If \code{WriteFile = TRUE}, this function does not return anything. If \code{WriteFile = FALSE}, a list containing the occurrence data for each species is returned.

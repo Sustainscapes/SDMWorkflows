@@ -8,6 +8,7 @@
 #' @param country character, The 2-letter country code (ISO-3166-1) in which the occurrence was recorded.
 #' @param limit maximum number of occurrences downloaded
 #' @param Log Logical. If \code{TRUE}, a log file will be created with information on the progress of the function.
+#' @param ... Additional arguments to be passed to the \code{occ_data} function.
 #'
 #' @return If \code{WriteFile = TRUE}, this function does not return anything. If \code{WriteFile = FALSE}, a list containing the occurrence data for each species is returned.
 #'
@@ -22,7 +23,7 @@
 #' Presences <- SDMWorkflows::GetOccs(Species = c("Abies concolor", "Canis lupus"), WriteFile = FALSE)
 #' }
 
-GetOccs <- function(Species, WriteFile = T, continent = NULL, country = NULL, limit = 10000, Log = T){
+GetOccs <- function(Species, WriteFile = T, continent = NULL, country = NULL, limit = 10000, Log = T, ...){
 
   if (!is.character(Species)) {
     stop("Species argument must be a character vector")
@@ -47,7 +48,7 @@ GetOccs <- function(Species, WriteFile = T, continent = NULL, country = NULL, li
   }
 
   if(Log == T){
-    log_file <- paste0("Occs/Log_", format(Sys.time(), "%Y-%m-%d_%H-%M-%S"), ".csv")
+    log_file <- paste0("Occs_Log_", format(Sys.time(), "%Y-%m-%d_%H-%M-%S"), ".csv")
     write.table(data.frame(Species = character(), Start_time = character(), End_time = character(), Error = character(), Num_presences = numeric()), file = log_file, row.names = FALSE, sep = ",")
   }
 
@@ -73,7 +74,8 @@ GetOccs <- function(Species, WriteFile = T, continent = NULL, country = NULL, li
                         continent = continent,
                         country = country,
                         hasGeospatialIssue = FALSE,
-                        limit = limit)
+                        limit = limit,
+                        ...)
       },
       error = function(e) {
         message(paste("Error for species", Species[i], Sys.time()))
